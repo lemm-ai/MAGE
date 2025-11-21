@@ -1,0 +1,114 @@
+# MAGE Configuration File
+
+# Audio output settings
+audio:
+  sample_rate: 44100      # Sample rate in Hz (22050, 44100, 48000, 96000)
+  bit_depth: 16           # Bit depth (16, 24, 32)
+  channels: 2             # Number of channels (1=mono, 2=stereo)
+  max_duration: 300.0     # Maximum duration in seconds
+  default_duration: 30.0  # Default generation duration in seconds
+
+# Model configuration
+model:
+  model_type: "default"   # Model type to use
+  model_path: null        # Path to custom model (null = use default)
+  cache_dir: "models"     # Directory to cache downloaded models
+  device: "auto"          # Device to use (auto, cpu, cuda, mps)
+  precision: "float32"    # Model precision (float16, float32)
+
+# Lyrics generation configuration
+lyrics:
+  model_path: null        # Path to LyricMind-AI model (null = use default)
+  cache_dir: "models/lyricmind"  # Directory for lyrics model cache
+  device: "auto"          # Device to use (auto, cpu, cuda, mps)
+  max_length: 512         # Maximum sequence length
+  temperature: 0.8        # Generation temperature (0.1-2.0)
+  top_k: 50              # Top-k sampling parameter
+  top_p: 0.9             # Top-p (nucleus) sampling parameter
+  num_return_sequences: 1 # Number of sequences to generate
+
+# Stem separation configuration
+stems:
+  model_name: "htdemucs"  # Demucs model name (htdemucs, htdemucs_ft, mdx, mdx_extra)
+  cache_dir: "models/demucs"  # Directory for model cache
+  output_dir: "output/stems"  # Directory for separated stems
+  device: "auto"          # Device to use (auto, cpu, cuda, mps)
+  use_cache: true         # Enable caching of separated stems
+
+# Timeline and arrangement configuration
+timeline:
+  default_tempo: 120.0    # Default tempo in BPM
+  time_signature_numerator: 4    # Time signature numerator (beats per bar)
+  time_signature_denominator: 4  # Time signature denominator (note value)
+  default_crossfade: 2.0  # Default crossfade duration in seconds
+  quantize_grid: 4        # Quantization grid (1=whole, 2=half, 4=quarter, 8=eighth, etc.)
+  auto_normalize: true    # Automatically normalize output to prevent clipping
+  prevent_clipping: true  # Prevent audio clipping during mixing
+  # Section durations in seconds
+  intro_duration: 8.0
+  verse_duration: 16.0
+  chorus_duration: 16.0
+  bridge_duration: 12.0
+  outro_duration: 8.0
+
+# Audio effects configuration
+effects:
+  # EQ settings
+  eq_low_shelf_gain_db: 0.0    # Low shelf gain in dB (-24 to +24)
+  eq_low_shelf_freq: 100.0     # Low shelf frequency in Hz
+  eq_mid_gain_db: 0.0          # Mid peak gain in dB (-24 to +24)
+  eq_mid_freq: 1000.0          # Mid peak frequency in Hz
+  eq_mid_q: 1.0                # Mid peak Q factor
+  eq_high_shelf_gain_db: 0.0   # High shelf gain in dB (-24 to +24)
+  eq_high_shelf_freq: 8000.0   # High shelf frequency in Hz
+  
+  # Compressor settings
+  comp_threshold_db: -20.0     # Threshold in dB (-60 to 0)
+  comp_ratio: 4.0              # Compression ratio (1.0 to 20.0)
+  comp_attack_ms: 5.0          # Attack time in milliseconds
+  comp_release_ms: 100.0       # Release time in milliseconds
+  
+  # Reverb settings
+  reverb_room_size: 0.5        # Room size (0.0 to 1.0)
+  reverb_damping: 0.5          # High frequency damping (0.0 to 1.0)
+  reverb_wet_level: 0.33       # Wet signal level (0.0 to 1.0)
+  reverb_dry_level: 0.4        # Dry signal level (0.0 to 1.0)
+  reverb_width: 1.0            # Stereo width (0.0 to 1.0)
+  
+  # Limiter settings
+  limiter_threshold_db: -1.0   # Limiting threshold in dB (-20 to 0)
+  limiter_release_ms: 100.0    # Release time in milliseconds
+  
+  # Enable/disable effects
+  enable_eq: false             # Enable EQ by default
+  enable_compressor: false     # Enable compressor by default
+  enable_reverb: false         # Enable reverb by default
+  enable_limiter: true         # Enable limiter by default (prevents clipping)
+
+# Vocal enhancement configuration
+vocals:
+  model_path: null            # Path to pretrained model (null = use default)
+  cache_dir: "models/vocals"  # Directory for model cache
+  device: "auto"              # Device to use (auto, cpu, cuda, mps)
+  # Enhancement settings
+  denoise_strength: 0.7       # Noise reduction strength (0.0 to 1.0)
+  brightness: 0.2             # High frequency boost (-1.0 to 1.0)
+  warmth: 0.1                 # Low-mid frequency boost (-1.0 to 1.0)
+  clarity: 0.3                # Mid-high frequency boost (-1.0 to 1.0)
+  target_level_db: -18.0      # Target RMS level in dB (-40 to 0)
+  compression_ratio: 3.0      # Dynamic compression ratio (1.0 to 10.0)
+
+# Generation parameters
+generation:
+  default_style: "ambient"    # Default music style
+  default_tempo: 120          # Default tempo in BPM
+  default_key: "C_major"      # Default musical key
+  complexity: 0.5             # Generation complexity (0.0-1.0)
+  seed: null                  # Random seed (null = random)
+
+# Logging configuration
+logging:
+  level: "INFO"           # Log level (DEBUG, INFO, WARNING, ERROR, CRITICAL)
+  log_dir: "logs"         # Directory for log files
+  console_output: true    # Enable console logging
+  file_output: true       # Enable file logging

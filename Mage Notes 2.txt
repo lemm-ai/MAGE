@@ -1,0 +1,147 @@
+# MAGE (Mixed Audio Generation Engine) - Technical Documentation (Revised)
+
+## 1. System Overview
+MAGE is a comprehensive AI-based music generation tool designed to produce high-quality audio tracks with advanced features like prompt analysis, lyric generation, stem processing, and timeline management. This revised version integrates **ACE-Step** for music generation, **Demucs** for stem separation, and updated audio processing tools under permissive licenses (MIT/Apache 2.0).
+
+---
+
+## 2. Core Components & Implementation Strategy
+
+### **A. Prompt Analysis & Style Interpretation**
+**Objective**: Extract musical parameters from user input (genre, BPM, mood, etc.)
+
+- **Model**: Use HuggingFace's `transformers` library with a fine-tuned BERT-based model trained on music metadata.
+- **Implementation**:
+  - Input: User prompt (e.g., "jazz blues in E minor, slow swing")
+  - Output: JSON object containing style, BPM range, key, etc.
+- **License**: BERT is under Apache 2.0.
+
+---
+
+### **B. Lyric Generation**
+**Objective**: Generate/replace lyrics based on prompt style and genre.
+
+- **Model**: Use GPT-2 (HuggingFace) trained on public-domain song corpora.
+- **Implementation**:
+  - Input: Prompt analysis results + optional user-provided lyrics.
+  - Output: Generated lyrics with timing markers for vocal stems.
+- **License**: GPT-2 is MIT.
+
+---
+
+### **C. Music & Stem Generation**
+**Objective**: Generate audio stems (vocals, drums, bass, etc.) using prompt-based models.
+
+1. **Music Generation**:
+   - **ACE-Step** (https://github.com/ace-step/ACE-Step):
+     - Pros: Supports vocal input via lyrics, high-quality output.
+     - Cons: Requires fine-tuning for specific styles.
+     - Workflow: Input lyrics + prompt analysis → Generate 32s clip with lead-in/out.
+
+2. **Stem Separation**:
+   - **Demucs** (https://github.com/facebookresearch/demucs):
+     - Pros: Higher quality than Spleeter, supports multi-track separation.
+     - Cons: Requires training on diverse datasets.
+     - Output: Vocal/instrumental stems for enhancement.
+
+---
+
+### **D. Audio Enhancement Pipeline**
+**Objective**: Enhance non-vocal and vocal stems for professional quality.
+
+1. **Non-Vocal Stems**:
+   - **Pedalboard**: Apply stereo widening, EQ, compression.
+   - **Librosa / Pydub**: For spectral analysis, normalization, and resampling (48kHz).
+   - **FFmpeg**: For crossfade between clips.
+
+2. **Vocal Enhancement**:
+   - **ClearerVoice**: AI-based vocal enhancement (MIT license).
+   - **SoVITS-SVC**: Voice conversion for vocal layering (Apache 2.0).
+
+---
+
+### **E. Clip Assembly & Timeline Management**
+**Objective**: Assemble clips into a cohesive song with seamless transitions.
+
+- **Timeline System**:
+  - Use `pydub` or `ffmpeg-python` to handle audio segment stitching.
+  - Allow user to place clips in: Intro, Previous, Next, Outro.
+  - Implement crossfade between clips (e.g., 2-second overlap).
+
+- **Clip Library Panel**:
+  - Store metadata for each clip (BPM, key, duration).
+  - Use SQLite or Firebase for real-time syncing.
+
+---
+
+### **F. Mastering & Export**
+**Objective**: Automate mastering and export to 48kHz.
+
+- **Mastering Tools**:
+  - **Librosa / Pydub**: Apply normalization, EQ, compression.
+  - **FFmpeg**: Loudness normalization via `-loudnorm` for consistent volume.
+
+- **Export Format**:
+  - Output as WAV/MP3 (48kHz, stereo).
+  - Allow user to select save location via file dialog.
+
+---
+
+## 3. Key Technologies & Libraries
+
+| Component              | Tool/Library                          | License       |
+|------------------------|---------------------------------------|---------------|
+| NLP Prompt Analysis   | HuggingFace Transformers (BERT)       | Apache 2.0    |
+| Lyric Generation      | GPT-2 (HuggingFace)                   | MIT           |
+| Music Generation      | ACE-Step (GitHub)                     | MIT / Apache 2.0 |
+| Stem Separation       | Demucs (Facebook Research)            | MIT           |
+| Audio Enhancement     | Pedalboard, ClearerVoice              | MIT / Apache 2.0 |
+| Timeline Management   | Pydub, ffmpeg-python                  | MIT           |
+| Clip Library          | SQLite                                | Public Domain |
+| Mastering             | Librosa, FFmpeg                       | MIT / GPL     |
+
+---
+
+## 4. Workflow Steps
+
+1. **User Input**:
+   - Prompt + optional lyrics.
+2. **Prompt Analysis** → Extract style, BPM, etc.
+3. **Lyric Generation** → Replace/append lyrics.
+4. **ACE-Step + Lyrics** → Generate 32s clip with lead-in/out.
+5. **Demucs Separation** → Split into vocal/instrumental tracks.
+6. **Enhancement** → Apply effects to stems.
+7. **Timeline Assembly** → Place clips in desired positions.
+8. **Mastering** → Final quality enhancement.
+9. **Export/Playback** → Download or play waveform.
+
+---
+
+## 5. Challenges & Solutions
+
+### **Challenge 1: ACE-Step Licensing**
+- **Solution**: ACE-Step uses MIT license (confirmed via GitHub). Ensure all dependencies are compatible.
+
+### **Challenge 2: Stem Syncing**
+- **Solution**: Use `pydub`/`ffmpeg` for time-stretching and alignment.
+
+### **Challenge 3: Real-Time Playback**
+- **Solution**: Use Web Audio API or `pydub` for waveform rendering.
+
+---
+
+## 6. Future Enhancements
+
+1. **AI-Powered Arrangement**: Auto-generate chord progressions based on prompt.
+2. **Multi-Language Support**: Integrate multilingual lyric generators (e.g., mBART).
+3. **Collaborative Features**: Allow users to share clip libraries via cloud storage.
+
+---
+
+## 7. License Compliance
+- All tools (ACE-Step, Demucs, Librosa, etc.) are available under permissive licenses (MIT/Apache 2.0/GPL). For GPL-compatible usage, ensure no derivative work is restricted unless explicitly required by the user.
+
+---
+
+## 8. Conclusion
+MAGE leverages cutting-edge open-source tools to deliver a high-quality music generation experience. By integrating **ACE-Step** for vocal-aware composition, **Demucs** for advanced stem separation, and permissive audio processing libraries, this system provides users with a powerful yet accessible platform for creative music production.
